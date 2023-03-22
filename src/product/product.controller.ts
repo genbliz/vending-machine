@@ -1,13 +1,13 @@
 import { Request, Response } from "express";
 import { verifyGetUserSessionData } from "../helpers/auth-session-helper-service";
 import { responseError, responseSuccess } from "../helpers/response";
+import { VALID_DEPOSIT_BUY_VALUES } from "../user/user.types";
 import { ProductRepository } from "./product.repository";
 import { IProduct } from "./product.types";
 
 export async function getProductById(req: Request, res: Response) {
   try {
     const dataId: string = req.params.id;
-
     const result = await ProductRepository.getById(dataId);
 
     return responseSuccess({ res, data: result });
@@ -18,7 +18,11 @@ export async function getProductById(req: Request, res: Response) {
 
 export async function buyProduct(req: Request, res: Response) {
   try {
-    const { amount, productId } = req.body;
+    const { amount, productId } = req.body as { amount: number; productId: string };
+
+    if (VALID_DEPOSIT_BUY_VALUES.includes(amount)) {
+      return responseError({ res, message: `Amount must be one of: ${VALID_DEPOSIT_BUY_VALUES.join(",")}` });
+    }
 
     const result = await ProductRepository.findSingle({ tenantId, dataId });
 
@@ -65,7 +69,10 @@ export async function updateProduct(req: Request, res: Response) {
   try {
     const sessionUser = await verifyGetUserSessionData(req);
 
-    const result = await ProductRepository.getById(req.params.id);
+    const result = await ProductRepository.getByIdForSeller({
+      dataId: req.params.id,
+      sellerId: sessionUser.userId,
+    });
 
     if (!result?.id) {
       return responseError({ res, message: "Product not found" });
@@ -77,7 +84,12 @@ export async function updateProduct(req: Request, res: Response) {
 
     const { amountAvailable, productName, cost } = req.body as IProduct;
 
-    const product01: IProduct = { ...result, amountAvailable, productName, cost };
+    const product01: IProduct = {
+      ...result,
+      cost,
+      productName,
+      amountAvailable,
+    };
 
     const result01 = await ProductRepository.update(product01);
 
@@ -97,7 +109,10 @@ export async function deleteProduct(req: Request, res: Response) {
 
     const dataId: string = req.params.id;
 
-    const result = await ProductRepository.getById(dataId);
+    const result = await ProductRepository.getByIdForSeller({
+      dataId,
+      sellerId: sessionUser.userId,
+    });
 
     if (!result?.id) {
       return responseError({ res, message: "Product not found" });

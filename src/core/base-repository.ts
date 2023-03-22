@@ -77,7 +77,7 @@ export abstract class BaseRepository<T extends ICore> {
     return result.value as unknown as T;
   }
 
-  async patch({ dataId, patialData, schema }: { dataId: string; patialData: Partial<T>; schema?: any }) {
+  async patch({ dataId, patialData, schema }: { dataId: string; patialData: Partial<T>; schema?: IBaseSchema<any> }) {
     const dataValidated = schema ? this.validateSchema(patialData, schema) : patialData;
 
     const result = await this.getDocClient().findOneAndUpdate({ _id: dataId as any }, { $set: { ...dataValidated } });
