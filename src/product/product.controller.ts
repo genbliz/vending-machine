@@ -9,9 +9,9 @@ import { IProduct } from "./product.types";
 export async function getProductById(req: Request, res: Response) {
   try {
     const dataId: string = req.params.id;
-    const result = await ProductRepository.getById(dataId);
+    const product = await ProductRepository.getById(dataId);
 
-    return responseSuccess({ res, data: result });
+    return responseSuccess({ res, data: product });
   } catch (error) {
     return responseError({ res, error });
   }
@@ -68,7 +68,7 @@ export async function createProduct(req: Request, res: Response) {
 
     const { amountAvailable, productName, cost } = req.body as IProduct;
 
-    const result = await ProductRepository.create({
+    const product = await ProductRepository.create({
       cost,
       productName,
       amountAvailable,
@@ -77,7 +77,7 @@ export async function createProduct(req: Request, res: Response) {
 
     return responseSuccess({
       res,
-      data: result,
+      data: product,
       message: `Product created successfully`,
     });
   } catch (error) {
@@ -89,23 +89,23 @@ export async function updateProduct(req: Request, res: Response) {
   try {
     const sessionUser = await verifyGetUserSessionData(req);
 
-    const result = await ProductRepository.getByIdForSeller({
+    const product = await ProductRepository.getByIdForSeller({
       dataId: req.params.id,
       sellerId: sessionUser.userId,
     });
 
-    if (!result?.id) {
+    if (!product?.id) {
       return responseError({ res, message: "Product not found" });
     }
 
-    if (sessionUser.userId !== result.sellerId) {
+    if (sessionUser.userId !== product.sellerId) {
       return responseError({ res, message: "Invalid action. You are not the owner" });
     }
 
     const { amountAvailable, productName, cost } = req.body as IProduct;
 
     const product01: IProduct = {
-      ...result,
+      ...product,
       cost,
       productName,
       amountAvailable,
@@ -129,16 +129,16 @@ export async function deleteProduct(req: Request, res: Response) {
 
     const dataId: string = req.params.id;
 
-    const result = await ProductRepository.getByIdForSeller({
+    const product = await ProductRepository.getByIdForSeller({
       dataId,
       sellerId: sessionUser.userId,
     });
 
-    if (!result?.id) {
+    if (!product?.id) {
       return responseError({ res, message: "Product not found" });
     }
 
-    if (sessionUser.userId !== result.sellerId) {
+    if (sessionUser.userId !== product.sellerId) {
       return responseError({ res, message: "Invalid action. You are not the owner" });
     }
 
