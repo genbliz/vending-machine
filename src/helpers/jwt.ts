@@ -24,7 +24,7 @@ function jwtVerifyTokenBase(token: string) {
 }
 
 export function jwtSignToken({ payload, audience }: { payload: Record<string, any>; audience: string }) {
-  const token01 = jwt.sign(JSON.stringify(payload), envConfig.JWT_SECRET, {
+  const token01 = jwt.sign(JSON.parse(JSON.stringify(payload)), envConfig.JWT_SECRET, {
     expiresIn: envConfig.JWT_EXPIRE_IN_SECONDS,
     audience,
   });

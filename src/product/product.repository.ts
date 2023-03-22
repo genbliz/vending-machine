@@ -8,7 +8,7 @@ class ProductRepositoryBase extends BaseRepository<IProduct> {
   }
 
   async getByIdForSeller({ dataId, sellerId }: { dataId: string; sellerId: string }) {
-    const result = await this.getDocClient().findOne({ _id: dataId as any, sellerId });
+    const result = await super.findOne({ id: dataId, sellerId });
     return result;
   }
 }

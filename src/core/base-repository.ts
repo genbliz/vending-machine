@@ -15,18 +15,36 @@ export abstract class BaseRepository<T extends ICore> {
     this.schema = schema;
   }
 
-  protected getDocClient() {
+  private getDocClient() {
     return getMongoConnection().db().collection<T>(this.tableName);
+  }
+
+  protected transposeToId(data: T) {
+    if (!(data && data["_id"])) {
+      return data;
+    }
+    const data01: Partial<T> = { ...data, id: data["_id"] };
+    delete data01["_id"];
+    return data01 as T;
+  }
+
+  protected transposeToNativeId(data: T) {
+    if (!(data && data["id"])) {
+      return data;
+    }
+    const data01: Partial<T> = { ...data, _id: data["id"] };
+    delete data01["id"];
+    return data01 as T;
   }
 
   async getById(dataId: string) {
     const result = await this.getDocClient().findOne<T>({ _id: dataId as any });
-    return result;
+    return result ? this.transposeToId(result) : result;
   }
 
   async findOne(filter: Filter<T>) {
     const result = await this.getDocClient().findOne<T>({ ...filter });
-    return result;
+    return result ? this.transposeToId(result) : result;
   }
 
   async deleteById(dataId: string) {
@@ -34,13 +52,21 @@ export abstract class BaseRepository<T extends ICore> {
     return result?.deletedCount;
   }
 
-  async getAll(filter?: Filter<T>) {
-    const filter01 = filter ? filter : {};
+  async getAll({ query, fields }: { query?: Filter<T>; fields?: (keyof T)[] } = {}) {
+    const filter01 = query ? query : {};
 
-    const result = await this.getDocClient()
-      .find<T>({ ...filter01 })
-      .toArray();
-    return result;
+    const builder = this.getDocClient().find<T>({ ...filter01 });
+
+    if (fields?.length) {
+      const fieldsobj = fields.reduce((prev, curr) => {
+        prev[curr] = 1;
+        return prev;
+      }, {} as Record<keyof T, number>);
+      builder.project(fieldsobj);
+    }
+
+    const result = await builder.toArray();
+    return result.map((f) => this.transposeToId(f));
   }
 
   private validateSchema(data: Partial<T>, schema: IBaseSchema<any>) {
@@ -54,10 +80,12 @@ export abstract class BaseRepository<T extends ICore> {
   async create(data: Partial<T>) {
     const data01 = { ...data };
     data01.id = randomUUID();
-    data01._id = data01.id;
     data01.createdAt = new Date().toISOString();
+
     const dataValidated = this.validateSchema(data01, this.schema);
-    const result = await this.getDocClient().insertOne({ ...dataValidated }, { forceServerObjectId: true });
+    const dataValidated01: any = this.transposeToNativeId(dataValidated);
+
+    const result = await this.getDocClient().insertOne({ ...dataValidated01 }, { forceServerObjectId: true });
 
     if (!result?.acknowledged) {
       throw GenericFriendlyError.createValidationError("Data not inserted");
@@ -69,23 +97,27 @@ export abstract class BaseRepository<T extends ICore> {
     const data01 = { ...data };
     data01.updatedAt = new Date().toISOString();
     const dataValidated = this.validateSchema(data01, this.schema);
+
     const result = await this.getDocClient().findOneAndUpdate({ _id: data01.id as any }, dataValidated);
 
     if (!result?.ok) {
       throw GenericFriendlyError.createValidationError("Data not updated");
     }
-    return result.value as unknown as T;
+
+    const value01: any = result?.value;
+
+    return value01 ? this.transposeToId(value01) : (value01 as unknown as T);
   }
 
   async patch({ dataId, patialData, schema }: { dataId: string; patialData: Partial<T>; schema?: IBaseSchema<any> }) {
     const dataValidated = schema ? this.validateSchema(patialData, schema) : patialData;
 
-    const result = await this.getDocClient().findOneAndUpdate({ _id: dataId as any }, { $set: { ...dataValidated } });
+    const result = await this.getDocClient().updateOne({ _id: dataId as any }, { $set: { ...dataValidated } });
 
-    if (!result?.ok) {
+    if (!result?.modifiedCount) {
       throw GenericFriendlyError.createValidationError("Data not updated");
     }
 
-    return result.value as unknown as T;
+    return await this.getById(dataId);
   }
 }

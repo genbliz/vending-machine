@@ -1,6 +1,6 @@
 import { GenericFriendlyError } from "./error";
 
-export function getFriendlyErrorMessage({ error, message }: { error?: unknown; message?: any } = {}) {
+export function getFriendlyErrorMessage({ error, message }: { error?: unknown; message?: any }) {
   let messageOrError: string = "";
 
   if (error instanceof GenericFriendlyError) {

@@ -68,7 +68,9 @@ export async function resetCoinDeposit(req: Request, res: Response) {
 
 export async function getUsers(req: Request, res: Response) {
   try {
-    const result = await UserRepository.getAll();
+    const result = await UserRepository.getAll({
+      fields: ["deposit", "id", "username", "role", "createdAt", "updatedAt"],
+    });
 
     return responseSuccess({ res, data: result });
   } catch (error) {
@@ -94,7 +96,9 @@ export async function registerUser(req: Request, res: Response) {
       password: passwordHashed,
     });
 
-    return responseSuccess({ res, data: result });
+    const result01 = { ...result, password: undefined };
+
+    return responseSuccess({ res, data: result01 });
   } catch (error) {
     return responseError({ res, error });
   }

@@ -21,7 +21,7 @@ export function responseError({
 
   if (error) {
     LoggingService.error(error);
-    const errorMsg = getFriendlyErrorMessage();
+    const errorMsg = getFriendlyErrorMessage({ error });
     if (errorMsg) {
       errorRes.message = errorMsg;
     }

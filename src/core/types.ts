@@ -3,7 +3,6 @@ import Joi from "joi";
 
 export interface ICore<T = string> {
   id: T;
-  _id: T;
   createdAt: string | Date;
   updatedAt: string | Date;
 }
