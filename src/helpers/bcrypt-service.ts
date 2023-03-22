@@ -24,7 +24,13 @@ function bcryptHash({ password, salt }: { password: string; salt: string | numbe
   });
 }
 
-export function validatePassword({ passwordInput, passwordHashed }: { passwordInput: string; passwordHashed: string }) {
+export function compareValidatePassword({
+  passwordInput,
+  passwordHashed,
+}: {
+  passwordInput: string;
+  passwordHashed: string;
+}) {
   return new Promise<boolean>((resolve, reject) => {
     bcrypt.compare(passwordInput, passwordHashed, (err, success) => {
       if (err) {

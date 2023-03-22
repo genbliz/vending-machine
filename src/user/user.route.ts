@@ -5,11 +5,11 @@ import { UserRolesEnum } from "./user.types";
 
 const routes = Router();
 
-routes.route("/").post([registerUser]).get([varifyUserLogin, getUsers]);
+routes.route("/").post([registerUser]).get([varifyUserLogin, getUsers]).delete([varifyUserLogin, deleteUserById]);
 //
 routes.post("/deposit", [varifyUserHasRole(UserRolesEnum.buyer), depositCoin]);
-routes.post("/reset", [varifyUserLogin, resetCoinDeposit]);
+routes.post("/reset", [varifyUserHasRole(UserRolesEnum.buyer), resetCoinDeposit]);
 //
-routes.use([varifyUserLogin]).route("/:id").get([getUserById]).delete([deleteUserById]);
+routes.route("/:id").get([varifyUserLogin, getUserById]);
 
 export default routes;

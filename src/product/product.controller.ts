@@ -1,7 +1,8 @@
 import { Request, Response } from "express";
 import { verifyGetUserSessionData } from "../helpers/auth-session-helper-service";
 import { responseError, responseSuccess } from "../helpers/response";
-import { VALID_DEPOSIT_BUY_VALUES } from "../user/user.types";
+import { UserRepository } from "../user/user.repository";
+import { VALID_DEPOSIT_BUY_COIN_VALUES } from "../user/user.types";
 import { ProductRepository } from "./product.repository";
 import { IProduct } from "./product.types";
 
@@ -18,15 +19,34 @@ export async function getProductById(req: Request, res: Response) {
 
 export async function buyProduct(req: Request, res: Response) {
   try {
+    const sessionUser = await verifyGetUserSessionData(req);
     const { amount, productId } = req.body as { amount: number; productId: string };
 
-    if (VALID_DEPOSIT_BUY_VALUES.includes(amount)) {
-      return responseError({ res, message: `Amount must be one of: ${VALID_DEPOSIT_BUY_VALUES.join(",")}` });
+    if (VALID_DEPOSIT_BUY_COIN_VALUES.includes(amount)) {
+      return responseError({ res, message: `Amount must be one of: ${VALID_DEPOSIT_BUY_COIN_VALUES.join(",")}` });
     }
 
-    const result = await ProductRepository.findSingle({ tenantId, dataId });
+    const user = await UserRepository.getById(sessionUser.userId);
 
-    return responseSuccess({ res, data: result });
+    if (!user?.id) {
+      return responseError({ res, message: "User not found" });
+    }
+
+    const product = await ProductRepository.getById(productId);
+
+    if (!product?.id) {
+      return responseError({ res, message: "Product not found" });
+    }
+
+    if (amount > user.deposit) {
+      return responseError({ res, message: `You have no sufficient deposit` });
+    }
+
+    if (amount > product.amountAvailable) {
+      return responseError({ res, message: `Only ${product.amountAvailable} products, in stock` });
+    }
+
+    return responseSuccess({ res, data: product });
   } catch (error) {
     return responseError({ res, error });
   }
