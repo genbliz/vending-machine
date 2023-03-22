@@ -1,9 +1,12 @@
-export interface IUser {
-  id: string;
+import { ICore } from "../core/types";
+
+export enum UserRole {
+  buyer = "buyer",
+}
+
+export interface IUser extends ICore {
   role: string;
   username: string;
   password: string;
   deposit: number;
-  createdAt: string | Date;
-  updatedAt: string | Date;
 }

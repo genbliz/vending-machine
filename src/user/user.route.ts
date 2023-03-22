@@ -1,13 +1,14 @@
 import { Router } from "express";
-import { userController } from "./user.controller";
+import { registerUser, getUsers, depositCoin, resetCoinDeposit, getUserById, deleteUserById } from "./user.controller";
+import { varifyUserLogin } from "../middleware/authorize";
 
 const routes = Router();
 
-routes.route("/").get([userController.getUsers]).put([userController.deposit]);
+routes.route("/").post([registerUser]).get([varifyUserLogin, getUsers]);
 //
-routes.post("/deposit", [userController.deposit]);
-routes.post("/reset", [userController.resetDeposit]);
+routes.post("/deposit", [varifyUserLogin, depositCoin]);
+routes.post("/reset", [varifyUserLogin, resetCoinDeposit]);
 //
-routes.route("/:id").get([userController.getById]).delete([userController.deleteById]);
+routes.use([varifyUserLogin]).route("/:id").get([getUserById]).delete([deleteUserById]);
 
 export default routes;

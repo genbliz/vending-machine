@@ -6,7 +6,7 @@ import { LoggingService } from "./logging-service";
 
 const SESSION_USER_VALUE_KEY = "current_session_user_00001";
 
-export async function getTokenFromHeaders(req: Request): Promise<string | null> {
+async function getTokenFromHeaders(req: Request): Promise<string | null> {
   if (req.headers.authorization && typeof req.headers.authorization === "string") {
     const authorization01 = req.headers.authorization.trim();
     if (authorization01.startsWith("Bearer ")) {

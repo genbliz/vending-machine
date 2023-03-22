@@ -22,7 +22,3 @@ export function getMongoConnection() {
   global["MONGO_DB_URI"] = client;
   return client;
 }
-
-const db = getMongoConnection();
-
-db.db().collection("").findOne({});

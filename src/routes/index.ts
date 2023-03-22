@@ -1,15 +1,13 @@
 import { Router } from "express";
-import { varifyUserLogin } from "../middleware/authorize";
 import product from "../product/product.route";
-import { userController } from "../user/user.controller";
+import { loginUser } from "../user/user.controller";
 import user from "../user/user.route";
 
 const routes = Router();
 
-routes.use("/register", [userController.registerUser]);
-routes.use("/login", [userController.loginUser]);
+routes.post("/login", [loginUser]);
 //
-routes.use("/product", [varifyUserLogin, product]);
-routes.use("/user", [varifyUserLogin, user]);
+routes.use("/product", [product]);
+routes.use("/user", [user]);
 
 export default routes;
