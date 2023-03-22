@@ -8,8 +8,8 @@ export interface ICore<T = string> {
   updatedAt: string | Date;
 }
 
-export interface IAuthUserResult extends Pick<jwt.JwtPayload, "iss" | "sub" | "exp"> {
-  id: string;
+export interface IAuthUserResult extends Pick<Partial<jwt.JwtPayload>, "iss" | "sub" | "exp"> {
+  userId: string;
   roles: string[];
   username: string;
 }

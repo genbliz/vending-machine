@@ -1,7 +1,7 @@
 import { Request } from "express";
 import { IAuthUserResult } from "../core/types";
 import { GenericFriendlyError } from "./error";
-import { verifyToken } from "./jwt";
+import { jwtVerifyToken } from "./jwt";
 import { LoggingService } from "./logging-service";
 
 const SESSION_USER_VALUE_KEY = "current_session_user_00001";
@@ -22,7 +22,7 @@ export async function verifyGetUserSessionData(req: Request) {
   if (userCachedDataStr) {
     try {
       const userData: IAuthUserResult = JSON.parse(userCachedDataStr);
-      if (userData?.id) {
+      if (userData?.userId) {
         return userData;
       }
     } catch (error) {
@@ -36,9 +36,9 @@ export async function verifyGetUserSessionData(req: Request) {
     throw GenericFriendlyError.createUnAuthorizedError("Token not found");
   }
 
-  const decodedUser = await verifyToken<IAuthUserResult>(token);
+  const decodedUser = await jwtVerifyToken<IAuthUserResult>(token);
 
-  if (!decodedUser?.id) {
+  if (!decodedUser?.userId) {
     throw GenericFriendlyError.createUnAuthorizedError("Token user not found");
   }
 

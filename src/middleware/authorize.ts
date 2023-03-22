@@ -6,7 +6,7 @@ import { responseError } from "../helpers/response";
 export async function varifyUserLogin(req: express.Request, res: express.Response, next: express.NextFunction) {
   try {
     const userData = await verifyGetUserSessionData(req);
-    if (userData?.id) {
+    if (userData?.userId) {
       return next();
     }
 
@@ -37,37 +37,15 @@ export function varifyUserHasRole(role: string) {
       return responseError({
         res,
         httpStatus: StatusCode.Unauthorized_401,
-        message: "Token could NOT be verified...",
+        message: `Role mismatched. User has no priviledge of access`,
       });
     } catch (error) {
       return responseError({
         res,
         httpStatus: StatusCode.Unauthorized_401,
         error,
-        message: "Error verifying token",
+        message: "Error verifying role",
       });
     }
   };
-}
-
-export async function varifyUserHasRole0(req: express.Request, res: express.Response, next: express.NextFunction) {
-  try {
-    const userData = await verifyGetUserSessionData(req);
-    if (userData?.id) {
-      return next();
-    }
-
-    return responseError({
-      res,
-      httpStatus: StatusCode.Unauthorized_401,
-      message: "Token could NOT be verified...",
-    });
-  } catch (error) {
-    return responseError({
-      res,
-      httpStatus: StatusCode.Unauthorized_401,
-      error,
-      message: "Error verifying token",
-    });
-  }
 }

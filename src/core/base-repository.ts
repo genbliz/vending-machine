@@ -31,7 +31,7 @@ export abstract class BaseRepository<T extends ICore> {
 
   async deleteById(dataId: string) {
     const result = await this.getDocClient().deleteOne({ _id: dataId as any });
-    return result;
+    return result?.deletedCount;
   }
 
   async getAll(filter?: Filter<T>) {
@@ -43,7 +43,7 @@ export abstract class BaseRepository<T extends ICore> {
     return result;
   }
 
-  private validateSchema(data: Partial<T>, schema: any) {
+  private validateSchema(data: Partial<T>, schema: IBaseSchema<any>) {
     const { error, value } = Joi.object(schema).validate(data);
     if (error) {
       throw GenericFriendlyError.createValidationError(getJoiValidationErrors(error) || "Unknown schema error");
@@ -62,7 +62,7 @@ export abstract class BaseRepository<T extends ICore> {
     if (!result?.acknowledged) {
       throw GenericFriendlyError.createValidationError("Data not inserted");
     }
-    return data01;
+    return data01 as T;
   }
 
   async update(data: T) {

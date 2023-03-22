@@ -23,7 +23,7 @@ function jwtVerifyTokenBase(token: string) {
   });
 }
 
-export function signToken({ payload, audience }: { payload: Record<string, any>; audience: string }) {
+export function jwtSignToken({ payload, audience }: { payload: Record<string, any>; audience: string }) {
   const token01 = jwt.sign(JSON.stringify(payload), envConfig.JWT_SECRET, {
     expiresIn: envConfig.JWT_EXPIRE_IN_SECONDS,
     audience,
@@ -31,7 +31,7 @@ export function signToken({ payload, audience }: { payload: Record<string, any>;
   return token01;
 }
 
-export async function verifyToken<T>(token: string) {
+export async function jwtVerifyToken<T>(token: string) {
   const { decoded, error } = await jwtVerifyTokenBase(token);
   if (error) {
     throw GenericFriendlyError.createUnAuthorizedError(error);

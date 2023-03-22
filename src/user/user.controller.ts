@@ -1,6 +1,11 @@
 import { Request, Response } from "express";
+import { IAuthUserResult } from "../core/types";
+import { createHashedPassword, validatePassword } from "../helpers/bcrypt-service";
+import { GenericFriendlyError } from "../helpers/error";
+import { jwtSignToken } from "../helpers/jwt";
 import { responseError, responseSuccess } from "../helpers/response";
 import { UserRepository } from "./user.repository";
+import { IUser } from "./user.types";
 
 export async function getUserById(req: Request, res: Response) {
   try {
@@ -41,22 +46,6 @@ export async function resetCoinDeposit(req: Request, res: Response) {
   }
 }
 
-export async function loginUser(req: Request, res: Response) {
-  try {
-    const { username, password } = req.body;
-
-    const result = await UserRepository.getByUserName(username);
-
-    if (result?.username === username) {
-      //
-    }
-
-    return responseSuccess({ res, data: result });
-  } catch (error) {
-    return responseError({ res, error });
-  }
-}
-
 export async function getUsers(req: Request, res: Response) {
   try {
     const result = await UserRepository.getAll();
@@ -69,15 +58,54 @@ export async function getUsers(req: Request, res: Response) {
 
 export async function registerUser(req: Request, res: Response) {
   try {
-    const { username, password, role } = req.body;
+    const { username, password, role } = req.body as IUser;
+
+    const passwordHashed = await createHashedPassword({ password });
 
     const result = await UserRepository.create({
       username,
-      password,
+      password: passwordHashed,
       role,
     });
 
     return responseSuccess({ res, data: result });
+  } catch (error) {
+    return responseError({ res, error });
+  }
+}
+
+export async function loginUser(req: Request, res: Response) {
+  try {
+    const { username, password } = req.body;
+
+    const user = await UserRepository.getByUserName(username);
+
+    if (!user?.username) {
+      throw GenericFriendlyError.createUnAuthorizedError("User not found");
+    }
+
+    const isMatched = await validatePassword({
+      passwordInput: password,
+      passwordHashed: user.password,
+    });
+
+    if (!isMatched) {
+      throw GenericFriendlyError.createUnAuthorizedError("Wrong password");
+    }
+
+    const payload: IAuthUserResult = {
+      userId: user.id,
+      roles: user.role.split(","),
+      username: user.username,
+    };
+
+    const access_token = jwtSignToken({ payload, audience: user.id });
+
+    return responseSuccess({
+      res,
+      data: { access_token, user: { username: user.username } },
+      message: "Login successfull!",
+    });
   } catch (error) {
     return responseError({ res, error });
   }

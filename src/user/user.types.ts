@@ -1,6 +1,6 @@
 import { ICore } from "../core/types";
 
-export enum UserRole {
+export enum UserRolesEnum {
   buyer = "buyer",
 }
 
