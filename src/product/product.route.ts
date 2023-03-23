@@ -15,14 +15,14 @@ const routes = Router();
 routes
   .route("/")
   .get([varifyUserLogin, getAllProduct])
-  .post([varifyUserHasRole(UserRolesEnum.seller), createProduct])
-  .put([varifyUserHasRole(UserRolesEnum.seller), updateProduct]);
+  .post([varifyUserHasRole(UserRolesEnum.seller), createProduct]);
 
 routes.post("/buy", [varifyUserHasRole(UserRolesEnum.buyer), buyProduct]);
 
 routes
   .route("/:id")
   .get([varifyUserLogin, getProductById])
+  .put([varifyUserHasRole(UserRolesEnum.seller), updateProduct])
   .delete([varifyUserHasRole(UserRolesEnum.seller), deleteProduct]);
 
 export default routes;

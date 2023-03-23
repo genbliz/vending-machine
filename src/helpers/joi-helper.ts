@@ -11,8 +11,6 @@ export function getJoiValidationErrors(err: Joi.ValidationError): string | null 
 }
 
 const joi_number_multiple_of_5 = (numberValue: unknown, helpers: Joi.CustomHelpers) => {
-  console.log({ numberValue });
-
   const errorMsg = `'${helpers.original}' not valid. Must be multiple of 5`;
 
   const regEx = /^[0-9]*$/;

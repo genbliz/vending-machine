@@ -84,6 +84,38 @@ export async function getUsers(req: Request, res: Response) {
   }
 }
 
+export async function updateUser(req: Request, res: Response) {
+  try {
+    const sessionUser = await verifyGetUserSessionData(req);
+
+    const user = await UserRepository.getById(sessionUser.userId);
+
+    if (!user?._id) {
+      return responseError({ res, message: "User not found" });
+    }
+
+    const { password } = req.body as IUser;
+
+    if (!password) {
+      const result01 = { ...user, password: undefined };
+      return responseSuccess({ res, data: result01 });
+    }
+
+    const passwordHashed = await createHashedPassword({ password });
+
+    const result = await UserRepository.update({
+      ...user,
+      password: passwordHashed,
+    });
+
+    const result01 = { ...result, password: undefined };
+
+    return responseSuccess({ res, data: result01 });
+  } catch (error) {
+    return responseError({ res, error });
+  }
+}
+
 export async function registerUser(req: Request, res: Response) {
   try {
     const { role, username, password } = req.body as IUser;

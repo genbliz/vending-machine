@@ -1,10 +1,11 @@
 import { randomUUID } from "node:crypto";
+import { Filter } from "mongodb";
+import Joi from "joi";
+
 import { getMongoConnection } from "./connection";
 import { ICore, IBaseSchema } from "./types";
-import Joi from "joi";
 import { getJoiValidationErrors } from "../helpers/joi-helper";
 import { GenericFriendlyError } from "../helpers/error";
-import { Filter } from "mongodb";
 
 export abstract class BaseRepository<T extends ICore> {
   private readonly tableName: string;
@@ -87,27 +88,29 @@ export abstract class BaseRepository<T extends ICore> {
     const dataValidated = this.validateSchema(data01, this.schema);
 
     const filter = { _id: data01._id } as Filter<T>;
-    const result = await this.getDocClient().findOneAndUpdate(filter, dataValidated);
+    const result = await this.getDocClient().findOneAndReplace(filter, dataValidated, { returnDocument: "after" });
 
-    if (!result?.ok) {
+    if (!result?.value) {
       throw GenericFriendlyError.createValidationError("Data not updated");
     }
 
-    const value01: any = result?.value;
-
-    return value01 as unknown as T;
+    return result.value;
   }
 
   async patch({ dataId, patialData, schema }: { dataId: string; patialData: Partial<T>; schema?: IBaseSchema<any> }) {
     const dataValidated = schema ? this.validateSchema(patialData, schema) : patialData;
 
     const filter = { _id: dataId } as Filter<T>;
-    const result = await this.getDocClient().updateOne(filter, { $set: { ...dataValidated } });
+    const result = await this.getDocClient().findOneAndUpdate(
+      filter,
+      { $set: { ...dataValidated } },
+      { returnDocument: "after" },
+    );
 
-    if (!result?.modifiedCount) {
+    if (!result?.value) {
       throw GenericFriendlyError.createValidationError("Data not updated");
     }
 
-    return await this.getById(dataId);
+    return result.value;
   }
 }
