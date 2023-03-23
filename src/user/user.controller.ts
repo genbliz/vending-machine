@@ -124,7 +124,7 @@ export async function loginUser(req: Request, res: Response) {
 
     const payload: IAuthUserResult = {
       userId: user.id,
-      roles: user.role.split(","),
+      role: user.role,
       username: user.username,
     };
 

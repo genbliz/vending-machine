@@ -9,7 +9,7 @@ export interface ICore<T = string> {
 
 export interface IAuthUserResult extends Pick<Partial<jwt.JwtPayload>, "iss" | "sub" | "exp"> {
   userId: string;
-  roles: string[];
+  role: string;
   username: string;
 }
 

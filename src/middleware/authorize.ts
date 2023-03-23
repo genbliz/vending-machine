@@ -30,7 +30,7 @@ export function varifyUserHasRole(role: string) {
     try {
       const userData = await verifyGetUserSessionData(req);
 
-      if (userData?.roles?.length && userData.roles.includes(role)) {
+      if (userData?.role && userData.role === role) {
         return next();
       }
 
