@@ -1,12 +1,13 @@
 {
   "name": "vending-machine",
   "version": "1.0.0",
-  "main": "./dist/index.js",
+  "main": "./index.js",
   "private": true,
   "scripts": {
     "start0": "nodemon --watch ./src/**/*.ts --ignore ./src/**/*.spec.ts --exec babel-node ./src/index.ts",
     "start": "nodemon --watch ./src/**/*.ts --ignore ./src/**/*.spec.ts --exec ts-node ./src/index.ts",
-    "build": "npx tsc -b"
+    "start-prod": "node ./index.js",
+    "build": "npx rimraf dist && npx tsc -b"
   },
   "author": "Chris",
   "license": "ISC",
