@@ -13,7 +13,9 @@ export async function getUserById(req: Request, res: Response) {
     const dataId: string = req.params.id;
     const result = await UserRepository.getById(dataId);
 
-    return responseSuccess({ res, data: result });
+    const result01 = { ...result, password: undefined };
+
+    return responseSuccess({ res, data: result01 });
   } catch (error) {
     return responseError({ res, error });
   }
@@ -34,7 +36,7 @@ export async function depositCoin(req: Request, res: Response) {
     if (!VALID_DEPOSIT_BUY_COIN_VALUES.includes(deposit)) {
       return responseError({
         res,
-        message: `Deposit coin must be one of: ${VALID_DEPOSIT_BUY_COIN_VALUES.join(",")}`,
+        message: `Deposit coin must be one of: [${VALID_DEPOSIT_BUY_COIN_VALUES.join(", ")}]`,
       });
     }
 
@@ -45,7 +47,9 @@ export async function depositCoin(req: Request, res: Response) {
       patialData: { deposit: deposit01 },
     });
 
-    return responseSuccess({ res, data: result });
+    const result01 = { ...result, password: undefined };
+
+    return responseSuccess({ res, data: result01 });
   } catch (error) {
     return responseError({ res, error });
   }
@@ -60,7 +64,9 @@ export async function resetCoinDeposit(req: Request, res: Response) {
       patialData: { deposit: 0 },
     });
 
-    return responseSuccess({ res, data: result });
+    const result01 = { ...result, password: undefined };
+
+    return responseSuccess({ res, data: result01 });
   } catch (error) {
     return responseError({ res, error });
   }
@@ -143,9 +149,9 @@ export async function loginUser(req: Request, res: Response) {
 export async function deleteUserById(req: Request, res: Response) {
   try {
     const sessionUser = await verifyGetUserSessionData(req);
-    const result = await UserRepository.deleteById(sessionUser.userId);
+    await UserRepository.deleteById(sessionUser.userId);
 
-    return responseSuccess({ res, data: result });
+    return responseSuccess({ res, data: {}, message: `User deleted successfully` });
   } catch (error) {
     return responseError({ res, error });
   }

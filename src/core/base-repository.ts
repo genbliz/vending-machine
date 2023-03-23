@@ -37,7 +37,7 @@ export abstract class BaseRepository<T extends ICore> {
   }
 
   private formatProjection(fields: (keyof T)[]) {
-    const fieldsobj = fields.reduce((prev, curr) => {
+    const fieldsobj = Array.from(new Set(fields)).reduce((prev, curr) => {
       prev[curr] = 1;
       return prev;
     }, {} as Record<keyof T, number>);

@@ -37,7 +37,7 @@ export function varifyUserHasRole(role: string) {
       return responseError({
         res,
         httpStatus: StatusCode.Unauthorized_401,
-        message: `Role mismatched. User has no priviledge of access`,
+        message: `Role mismatched. You do not have '${role}' role to perform this action`,
       });
     } catch (error) {
       return responseError({
