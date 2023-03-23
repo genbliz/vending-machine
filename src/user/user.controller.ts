@@ -25,7 +25,7 @@ export async function depositCoin(req: Request, res: Response) {
 
     const user = await UserRepository.getById(sessionUser.userId);
 
-    if (!user?.id) {
+    if (!user?._id) {
       return responseError({ res, message: "User not found" });
     }
 
@@ -69,7 +69,7 @@ export async function resetCoinDeposit(req: Request, res: Response) {
 export async function getUsers(req: Request, res: Response) {
   try {
     const result = await UserRepository.getAll({
-      fields: ["deposit", "id", "username", "role", "createdAt", "updatedAt"],
+      fields: ["deposit", "_id", "username", "role", "createdAt", "updatedAt"],
     });
 
     return responseSuccess({ res, data: result });
@@ -123,12 +123,12 @@ export async function loginUser(req: Request, res: Response) {
     }
 
     const payload: IAuthUserResult = {
-      userId: user.id,
+      userId: user._id,
       role: user.role,
       username: user.username,
     };
 
-    const access_token = jwtSignToken({ payload, audience: user.id });
+    const access_token = jwtSignToken({ payload, audience: user._id });
 
     return responseSuccess({
       res,

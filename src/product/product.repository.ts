@@ -8,7 +8,7 @@ class ProductRepositoryBase extends BaseRepository<IProduct> {
   }
 
   async getByIdForSeller({ dataId, sellerId }: { dataId: string; sellerId: string }) {
-    const result = await super.findOne({ id: dataId, sellerId });
+    const result = await super.findOne({ _id: dataId, sellerId });
     return result;
   }
 }

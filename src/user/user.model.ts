@@ -5,7 +5,7 @@ import { IUser, UserRolesEnum } from "./user.types";
 const validRole = Object.values(UserRolesEnum);
 
 export const userSchema: IBaseSchema<IUser> = {
-  id: Joi.string().uuid().required(),
+  _id: Joi.string().uuid().required(),
   deposit: Joi.number().min(0).default(0),
   password: Joi.string().required(),
   role: Joi.string()

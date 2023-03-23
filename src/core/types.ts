@@ -1,8 +1,8 @@
 import jwt from "jsonwebtoken";
 import Joi from "joi";
 
-export interface ICore<T = string> {
-  id: T;
+export interface ICore {
+  _id: string;
   createdAt: string | Date;
   updatedAt: string | Date;
 }

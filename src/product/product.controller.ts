@@ -28,13 +28,13 @@ export async function buyProduct(req: Request, res: Response) {
 
     const user = await UserRepository.getById(sessionUser.userId);
 
-    if (!user?.id) {
+    if (!user?._id) {
       return responseError({ res, message: "User not found" });
     }
 
     const product = await ProductRepository.getById(productId);
 
-    if (!product?.id) {
+    if (!product?._id) {
       return responseError({ res, message: "Product not found" });
     }
 
@@ -94,7 +94,7 @@ export async function updateProduct(req: Request, res: Response) {
       sellerId: sessionUser.userId,
     });
 
-    if (!product?.id) {
+    if (!product?._id) {
       return responseError({ res, message: "Product not found" });
     }
 
@@ -134,7 +134,7 @@ export async function deleteProduct(req: Request, res: Response) {
       sellerId: sessionUser.userId,
     });
 
-    if (!product?.id) {
+    if (!product?._id) {
       return responseError({ res, message: "Product not found" });
     }
 
