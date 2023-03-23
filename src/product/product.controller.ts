@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { verifyGetUserSessionData } from "../helpers/auth-session-helper-service";
 import { responseError, responseSuccess } from "../helpers/response";
+import { StatusCode } from "../helpers/status-codes";
 import { UserRepository } from "../user/user.repository";
 import { VALID_DEPOSIT_BUY_COIN_VALUES } from "../user/user.types";
 import { ProductRepository } from "./product.repository";
@@ -20,7 +21,24 @@ export async function getProductById(req: Request, res: Response) {
 export async function buyProduct(req: Request, res: Response) {
   try {
     const sessionUser = await verifyGetUserSessionData(req);
+
     const { amount, productId } = req.body as { amount: number; productId: string };
+
+    if (!(typeof amount === "number")) {
+      return responseError({
+        res,
+        message: "amount is required and must be a number",
+        httpStatus: StatusCode.Validation_Error_422,
+      });
+    }
+
+    if (!(productId && typeof productId === "string")) {
+      return responseError({
+        res,
+        message: "productId is required",
+        httpStatus: StatusCode.Validation_Error_422,
+      });
+    }
 
     if (!VALID_DEPOSIT_BUY_COIN_VALUES.includes(amount)) {
       return responseError({ res, message: `Amount must be one of: [${VALID_DEPOSIT_BUY_COIN_VALUES.join(", ")}]` });
