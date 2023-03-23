@@ -22,7 +22,7 @@ export async function buyProduct(req: Request, res: Response) {
     const sessionUser = await verifyGetUserSessionData(req);
     const { amount, productId } = req.body as { amount: number; productId: string };
 
-    if (VALID_DEPOSIT_BUY_COIN_VALUES.includes(amount)) {
+    if (!VALID_DEPOSIT_BUY_COIN_VALUES.includes(amount)) {
       return responseError({ res, message: `Amount must be one of: ${VALID_DEPOSIT_BUY_COIN_VALUES.join(",")}` });
     }
 

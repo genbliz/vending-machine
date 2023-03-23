@@ -31,7 +31,7 @@ export async function depositCoin(req: Request, res: Response) {
 
     const deposit: number = req.body.deposit;
 
-    if (VALID_DEPOSIT_BUY_COIN_VALUES.includes(deposit)) {
+    if (!VALID_DEPOSIT_BUY_COIN_VALUES.includes(deposit)) {
       return responseError({
         res,
         message: `Deposit coin must be one of: ${VALID_DEPOSIT_BUY_COIN_VALUES.join(",")}`,
