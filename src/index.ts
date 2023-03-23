@@ -1,5 +1,5 @@
 import app from "./app";
-import http from "node:http";
+import http from "http";
 import { envConfig } from "./helpers/env";
 
 const PORT = envConfig.PORT || 3000;

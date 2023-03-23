@@ -1,13 +1,13 @@
 {
   "compilerOptions": {
-    "target": "es2021",
+    "target": "es2018",
     "module": "commonjs",
     "declaration": false,
     "noImplicitAny": false,
     "removeComments": true,
     "moduleResolution": "node",
     "sourceMap": true,
-    "importHelpers": false,
+    "importHelpers": true,
     "lib": ["dom", "esnext"],
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,

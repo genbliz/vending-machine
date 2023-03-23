@@ -1,9 +1,7 @@
-import os from "node:os";
-import path from "node:path";
-import fs from "node:fs";
-import { randomFillSync, createHash, randomUUID } from "node:crypto";
-import { createGzip, createGunzip } from "node:zlib";
-import { pipeline } from "node:stream/promises";
+import os from "os";
+import path from "path";
+import fs from "fs";
+import { randomFillSync, createHash, randomUUID } from "crypto";
 
 class UtilServiceBase {
   convertHexadecimalToNumber(hexString: string) {
@@ -247,20 +245,6 @@ class UtilServiceBase {
       return true;
     }
     return false;
-  }
-
-  async doGzip({ inputFile, outputFile }: { inputFile: string; outputFile: string }) {
-    const gzip = createGzip();
-    const source = fs.createReadStream(inputFile);
-    const destination = fs.createWriteStream(outputFile);
-    await pipeline(source, gzip, destination);
-  }
-
-  async doUnGzip({ gzippedFilePath, outputFilePath }: { gzippedFilePath: string; outputFilePath: string }) {
-    const ungzip = createGunzip();
-    const source = fs.createReadStream(gzippedFilePath);
-    const destination = fs.createWriteStream(outputFilePath);
-    await pipeline(source, ungzip, destination);
   }
 
   memoize<T extends (...args: Parameters<T>) => any>(cb: T) {
