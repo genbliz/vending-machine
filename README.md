@@ -19,7 +19,6 @@ Update the .env with variable values
 ## Running the app
 
 ```bash
-# development
 $ npm run start
 
 ```
@@ -27,14 +26,13 @@ $ npm run start
 ## Test
 
 ```bash
-# e2e tests
 $ npm run test
 ```
 
 ## Documentation
 Navigate to  ```http://localhost:3000/docs``` on your computer to view the openapi documentation.
 
-## Technology Stack
+## Technology Used
 * **Library**: Express JS
 * **Language**: Typescript
 * **Database**: MongoDB
