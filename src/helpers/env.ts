@@ -51,15 +51,13 @@ function getEnvNumber(envKey: string, defaultVal?: number) {
 type IEnvironment = "production" | "staging" | "development" | "test";
 
 export const envConfig = {
-  //
   PORT: getEnvNumber("PORT"),
   JWT_SECRET: getEnvString("JWT_SECRET"),
   JWT_EXPIRE_IN_SECONDS: getEnvNumber("JWT_EXPIRE_IN_SECONDS"),
   NODE_ENV: getEnvString("NODE_ENV") as IEnvironment,
   MONGO_DB_URI: getEnvString("MONGO_DB_URI"),
-  // APP_AWS_ACCESS_KEY_ID: getEnvString("APP_AWS_ACCESS_KEY_ID"),
-  // APP_AWS_SECRET_ACCESS_KEY: getEnvString("APP_AWS_SECRET_ACCESS_KEY"),
-  // APP_AWS_REGION: getEnvString("APP_AWS_REGION"),
+  MONGO_DB_NAME: getEnvString("MONGO_DB_NAME"),
+  MONGO_DB_TEST_NAME: getEnvString("MONGO_DB_TEST_NAME"),
 } as const;
 
 export type IEnvConfig = typeof envConfig;

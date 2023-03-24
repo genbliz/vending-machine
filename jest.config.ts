@@ -16,7 +16,7 @@ const config: Config = {
   testEnvironment: "node",
   testTimeout: 20000,
   // globalSetup: "./jest.global-setup.ts",
-  // globalTeardown: "./jest.global-teardown.ts",
+  globalTeardown: "./src/test/config/jest.global-teardown.ts",
   // coverageThreshold: {
   //   global: {
   //     branches: 80,

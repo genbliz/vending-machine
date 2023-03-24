@@ -9,9 +9,6 @@ export function getMongoConnection() {
   if (client) {
     return client;
   }
-  if (global["MONGO_DB_URI"]) {
-    return global["MONGO_DB_URI"] as MongoClient;
-  }
   client = new MongoClient(envConfig.MONGO_DB_URI, {
     serverApi: {
       version: ServerApiVersion.v1,
@@ -19,6 +16,10 @@ export function getMongoConnection() {
       deprecationErrors: true,
     },
   });
-  global["MONGO_DB_URI"] = client;
   return client;
+}
+
+export function getMongoDbConnection() {
+  const dbname = envConfig.NODE_ENV === "test" ? envConfig.MONGO_DB_TEST_NAME : envConfig.MONGO_DB_URI;
+  return getMongoConnection().db(dbname);
 }

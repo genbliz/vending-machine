@@ -13,12 +13,6 @@ export const productTest = () =>
 
     let productData = {} as IProduct;
 
-    const prod01 = {
-      amountAvailable: 14,
-      cost: 50,
-      productName: `Lolipop-${Date.now()}`,
-    };
-
     beforeAll(async () => {
       const result = await request.post(`/login`).send({ username, password }).expect(StatusCode.OK_200);
       expect(typeof result.body.data.access_token).toBe("string");
@@ -26,6 +20,12 @@ export const productTest = () =>
     });
 
     it("create product (POST)", async () => {
+      const prod01 = {
+        amountAvailable: 1000,
+        cost: 50,
+        productName: `Lolipop-${Date.now()}`,
+      };
+
       const result = await request
         .post(`/product`)
         .set("Authorization", `Bearer ${access_token}`)
@@ -37,6 +37,22 @@ export const productTest = () =>
 
       expect(result.body).toHaveProperty("status");
       expect(result.body).toHaveProperty("data");
+
+      const prod02 = {
+        amountAvailable: 1400,
+        cost: 100,
+        productName: `Lolipop-${Date.now()}`,
+      };
+
+      const result01 = await request
+        .post(`/product`)
+        .set("Authorization", `Bearer ${access_token}`)
+        .set("Accept", "application/json")
+        .send(prod02)
+        .expect(StatusCode.OK_200);
+
+      expect(result01.body).toHaveProperty("status");
+      expect(result01.body).toHaveProperty("data");
     });
 
     it("get all products (GET)", async () => {

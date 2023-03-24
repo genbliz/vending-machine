@@ -1,8 +1,7 @@
 import { randomUUID } from "crypto";
 import { Filter } from "mongodb";
 import Joi from "joi";
-
-import { getMongoConnection } from "./connection";
+import { getMongoDbConnection } from "./connection";
 import { ICore, IBaseSchema } from "./types";
 import { getJoiValidationErrors } from "../helpers/joi-helper";
 import { GenericFriendlyError } from "../helpers/error";
@@ -17,7 +16,7 @@ export abstract class BaseRepository<T extends ICore> {
   }
 
   private getDocClient() {
-    return getMongoConnection().db().collection<T>(this.tableName);
+    return getMongoDbConnection().collection<T>(this.tableName);
   }
 
   async getById(dataId: string) {

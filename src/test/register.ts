@@ -1,13 +1,19 @@
 import supertest from "supertest";
 import app from "../app";
 import { StatusCode } from "../helpers/status-codes";
-import { demoUserSeller } from "./demo-data";
+import { demoUserSeller, demoUserBuyer } from "./demo-data";
 const request = supertest(app);
 
 export const registerTest = () =>
   describe("Register", () => {
-    it("register buyer seller", async () => {
+    it("register seller", async () => {
       const result = await request.post(`/user`).send(demoUserSeller).expect(StatusCode.OK_200);
+      expect(result.body).toHaveProperty("status");
+      expect(result.body).toHaveProperty("data");
+    });
+
+    it("register buyer", async () => {
+      const result = await request.post(`/user`).send(demoUserBuyer).expect(StatusCode.OK_200);
       expect(result.body).toHaveProperty("status");
       expect(result.body).toHaveProperty("data");
     });
