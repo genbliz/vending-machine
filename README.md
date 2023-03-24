@@ -29,7 +29,25 @@ $ npm run start
 $ npm run test
 ```
 
-## Postman Url
+## Available APIs
+```bash
+GET http://localhost:3000/user
+POST http://localhost:3000/user
+PUT http://localhost:3000/user
+DELETE http://localhost:3000/user
+POST http://localhost:3000/user/reset
+GET http://localhost:3000/user/:id
+
+GET http://localhost:3000/product
+POST http://localhost:3000/product
+GET http://localhost:3000/product/:id
+PUT http://localhost:3000/product/:id
+DELETE http://localhost:3000/product/:id
+
+POST http://localhost:3000/login
+POST http://localhost:3000/buy
+POST http://localhost:3000/deposit
+```
 
 ## Technology Used
 * **Library**: Express JS
