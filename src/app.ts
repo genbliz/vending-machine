@@ -16,6 +16,6 @@ app.get("/health", (req, res) => {
   res.json({ mesage: "Api working" });
 });
 
-app.use([routes]);
+app.use(routes);
 
 export default app;

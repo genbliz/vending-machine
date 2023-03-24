@@ -107,9 +107,15 @@ export async function updateProduct(req: Request, res: Response) {
   try {
     const sessionUser = await verifyGetUserSessionData(req);
 
-    const product = await ProductRepository.getByIdForSeller({
+    console.log({
       dataId: req.params.id,
       sellerId: sessionUser.userId,
+    });
+
+    const product = await ProductRepository.getById(req.params.id);
+
+    console.log({
+      product,
     });
 
     if (!product?._id) {
@@ -117,7 +123,11 @@ export async function updateProduct(req: Request, res: Response) {
     }
 
     if (sessionUser.userId !== product.sellerId) {
-      return responseError({ res, message: "Invalid action. You are not the owner" });
+      return responseError({
+        res,
+        message: "Invalid action. You are not the owner",
+        httpStatus: StatusCode.Forbidden_403,
+      });
     }
 
     const { amountAvailable, productName, cost } = req.body as IProduct;

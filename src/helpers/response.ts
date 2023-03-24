@@ -17,13 +17,18 @@ export function responseError({
   const errorRes = {
     message,
     status: "error",
+    httpStatus,
   };
 
   if (error) {
     LoggingService.error(error);
-    const errorMsg = getFriendlyErrorMessage({ error });
-    if (errorMsg) {
-      errorRes.message = errorMsg;
+    const errorData = getFriendlyErrorMessage({ error });
+    if (errorData.message) {
+      errorRes.message = errorData.message;
+      if (errorData.httpStatus) {
+        errorRes.httpStatus = errorData.httpStatus;
+        //
+      }
     }
   } else if (message) {
     LoggingService.error(message);
@@ -31,7 +36,7 @@ export function responseError({
 
   errorRes.message = errorRes.message || "Unknow error";
 
-  return res.status(httpStatus).json(errorRes);
+  return res.status(errorRes.httpStatus).json(errorRes);
 }
 
 export function responseSuccess({

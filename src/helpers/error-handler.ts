@@ -4,7 +4,10 @@ export function getFriendlyErrorMessage({ error, message }: { error?: unknown; m
   let messageOrError: string = "";
 
   if (error instanceof GenericFriendlyError) {
-    return error.message.trim();
+    return {
+      message: error.message.trim(),
+      httpStatus: error.httpStatus,
+    };
   }
 
   // let _errorMsg: unknown;
@@ -17,5 +20,5 @@ export function getFriendlyErrorMessage({ error, message }: { error?: unknown; m
   if (messageOrError === "" && message && typeof message === "string") {
     messageOrError = message;
   }
-  return messageOrError.trim();
+  return { message: messageOrError.trim() };
 }

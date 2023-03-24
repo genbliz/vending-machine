@@ -120,6 +120,18 @@ export async function registerUser(req: Request, res: Response) {
   try {
     const { role, username, password } = req.body as IUser;
 
+    if (!(username && typeof username === "string")) {
+      throw GenericFriendlyError.createValidationError("username is required and must be string");
+    }
+
+    if (!(password && typeof password === "string")) {
+      throw GenericFriendlyError.createValidationError("password is required and must be string");
+    }
+
+    if (!(role && typeof role === "string")) {
+      throw GenericFriendlyError.createValidationError("role is required and must be string");
+    }
+
     const user = await UserRepository.getByUserName(username);
 
     if (user?.username) {
@@ -145,6 +157,14 @@ export async function registerUser(req: Request, res: Response) {
 export async function loginUser(req: Request, res: Response) {
   try {
     const { username, password } = req.body;
+
+    if (!(username && typeof username === "string")) {
+      throw GenericFriendlyError.createValidationError("username is required and must be string");
+    }
+    if (!(password && typeof password === "string")) {
+      throw GenericFriendlyError.createValidationError("password is required and must be string");
+    }
+
     const user = await UserRepository.getByUserName(username);
 
     if (!user?.username) {
@@ -170,7 +190,14 @@ export async function loginUser(req: Request, res: Response) {
 
     return responseSuccess({
       res,
-      data: { access_token, user: { username: user.username } },
+      data: {
+        access_token,
+        user: {
+          _id: user._id,
+          username: user.username,
+          role: user.role,
+        },
+      },
       message: "Login successfull!",
     });
   } catch (error) {
