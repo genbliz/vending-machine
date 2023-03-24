@@ -1,6 +1,6 @@
 import express from "express";
 import { StatusCode } from "../helpers/status-codes";
-import { verifyGetUserSessionData } from "../helpers/auth-session-helper-service";
+import { verifyGetUserSessionData } from "../helpers/auth-session";
 import { responseError } from "../helpers/response";
 
 export async function varifyUserLogin(req: express.Request, res: express.Response, next: express.NextFunction) {

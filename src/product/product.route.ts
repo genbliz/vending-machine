@@ -1,14 +1,7 @@
 import { Router } from "express";
 import { varifyUserHasRole, varifyUserLogin } from "../middleware/authorize";
 import { UserRolesEnum } from "../user/user.types";
-import {
-  getProductById,
-  buyProduct,
-  deleteProduct,
-  getAllProduct,
-  createProduct,
-  updateProduct,
-} from "./product.controller";
+import { getProductById, deleteProduct, getAllProduct, createProduct, updateProduct } from "./product.controller";
 
 const routes = Router();
 
@@ -16,8 +9,6 @@ routes
   .route("/")
   .get([varifyUserLogin, getAllProduct])
   .post([varifyUserHasRole(UserRolesEnum.seller), createProduct]);
-
-routes.post("/buy", [varifyUserHasRole(UserRolesEnum.buyer), buyProduct]);
 
 routes
   .route("/:id")

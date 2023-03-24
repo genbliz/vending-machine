@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { verifyGetUserSessionData } from "../helpers/auth-session-helper-service";
+import { verifyGetUserSessionData } from "../helpers/auth-session";
 import { responseError, responseSuccess } from "../helpers/response";
 import { StatusCode } from "../helpers/status-codes";
 import { UserRepository } from "../user/user.repository";
@@ -21,7 +21,6 @@ export async function getProductById(req: Request, res: Response) {
 export async function buyProduct(req: Request, res: Response) {
   try {
     const sessionUser = await verifyGetUserSessionData(req);
-
     const { amount, productId } = req.body as { amount: number; productId: string };
 
     if (!(typeof amount === "number")) {
@@ -83,7 +82,6 @@ export async function getAllProduct(req: Request, res: Response) {
 export async function createProduct(req: Request, res: Response) {
   try {
     const sessionUser = await verifyGetUserSessionData(req);
-
     const { amountAvailable, productName, cost } = req.body as IProduct;
 
     const product = await ProductRepository.create({
@@ -106,17 +104,7 @@ export async function createProduct(req: Request, res: Response) {
 export async function updateProduct(req: Request, res: Response) {
   try {
     const sessionUser = await verifyGetUserSessionData(req);
-
-    console.log({
-      dataId: req.params.id,
-      sellerId: sessionUser.userId,
-    });
-
     const product = await ProductRepository.getById(req.params.id);
-
-    console.log({
-      product,
-    });
 
     if (!product?._id) {
       return responseError({ res, message: "Product not found" });
@@ -154,7 +142,6 @@ export async function updateProduct(req: Request, res: Response) {
 export async function deleteProduct(req: Request, res: Response) {
   try {
     const sessionUser = await verifyGetUserSessionData(req);
-
     const dataId: string = req.params.id;
 
     const product = await ProductRepository.getByIdForSeller({

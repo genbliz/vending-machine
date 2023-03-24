@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { IAuthUserResult } from "../core/types";
-import { verifyGetUserSessionData } from "../helpers/auth-session-helper-service";
+import { verifyGetUserSessionData } from "../helpers/auth-session";
 import { createHashedPassword, compareValidatePassword } from "../helpers/bcrypt-service";
 import { GenericFriendlyError } from "../helpers/error";
 import { jwtSignToken } from "../helpers/jwt";

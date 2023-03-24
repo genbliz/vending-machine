@@ -1,9 +1,9 @@
 import Joi from "joi";
-import { UtilService } from "./util-service";
+import { convertObjectToJsonPlainObject } from "./utils";
 
 export function getJoiValidationErrors(err: Joi.ValidationError): string | null {
   if (err?.details?.length) {
-    const details = UtilService.convertObjectToJsonPlainObject(err.details);
+    const details = convertObjectToJsonPlainObject(err.details);
     const joiData = details.map((x) => x.message.replace(new RegExp('"', "g"), ""));
     return joiData.join("; ");
   }

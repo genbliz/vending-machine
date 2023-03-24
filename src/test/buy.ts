@@ -5,24 +5,27 @@ import { demoUserBuyer } from "./demo-data";
 const { username, password } = demoUserBuyer;
 const request = supertest(app);
 
-export const loginTest = () =>
-  describe("Buy Product", () => {
-    it("succeeds with correct credentials", async () => {
+export const depositTest = () =>
+  describe("Buy", () => {
+    let access_token = "";
+
+    const coinData = { deposit: 50 };
+
+    beforeAll(async () => {
       const result = await request.post(`/login`).send({ username, password }).expect(StatusCode.OK_200);
+      expect(typeof result.body.data.access_token).toBe("string");
+      access_token = result.body.data.access_token;
+    });
+
+    it("buy product", async () => {
+      const result = await request
+        .post(`/buy`)
+        .set("Authorization", `Bearer ${access_token}`)
+        .set("Accept", "application/json")
+        .send(coinData)
+        .expect(StatusCode.OK_200);
+
       expect(result.body).toHaveProperty("status");
       expect(result.body).toHaveProperty("data");
-      expect(result.body.data).toHaveProperty("access_token");
-      expect(result.body.data).toHaveProperty("user");
-      expect(result.body.data.user.username).toBe(username);
-    });
-
-    it("fails with invalid credentials", async () => {
-      const user = { username, password: "774848_kd" };
-      await request.post(`/login`).send(user).expect(StatusCode.Unauthorized_401);
-    });
-
-    it("fails with missing credentials", async () => {
-      const user = {};
-      await request.post(`/login`).send(user).expect(StatusCode.Validation_Error_422);
     });
   });
