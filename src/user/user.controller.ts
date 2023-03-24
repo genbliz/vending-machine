@@ -161,6 +161,7 @@ export async function loginUser(req: Request, res: Response) {
     if (!(username && typeof username === "string")) {
       throw GenericFriendlyError.createValidationError("username is required and must be string");
     }
+
     if (!(password && typeof password === "string")) {
       throw GenericFriendlyError.createValidationError("password is required and must be string");
     }
