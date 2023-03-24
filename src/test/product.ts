@@ -16,7 +16,7 @@ export const productTest = () =>
     const prod01 = {
       amountAvailable: 14,
       cost: 50,
-      productName: `Lolipo-${Date.now()}`,
+      productName: `Lolipop-${Date.now()}`,
     };
 
     beforeAll(async () => {
@@ -25,7 +25,7 @@ export const productTest = () =>
       access_token = result.body.data.access_token;
     });
 
-    it("create product", async () => {
+    it("create product (POST)", async () => {
       const result = await request
         .post(`/product`)
         .set("Authorization", `Bearer ${access_token}`)
@@ -39,7 +39,7 @@ export const productTest = () =>
       expect(result.body).toHaveProperty("data");
     });
 
-    it("get all products", async () => {
+    it("get all products (GET)", async () => {
       const result = await request
         .get(`/product`)
         .set("Authorization", `Bearer ${access_token}`)
@@ -50,7 +50,7 @@ export const productTest = () =>
       expect(result.body).toHaveProperty("data");
     });
 
-    it("get product by id", async () => {
+    it("get product by id (GET)", async () => {
       const result = await request
         .get(`/product/${productData._id}`)
         .set("Authorization", `Bearer ${access_token}`)
@@ -62,7 +62,7 @@ export const productTest = () =>
       expect(result.body.data._id).toBe(productData._id);
     });
 
-    it("update product", async () => {
+    it("update product (PUT)", async () => {
       const prod012: IProduct = { ...productData };
       prod012.amountAvailable++;
 
@@ -77,7 +77,7 @@ export const productTest = () =>
       expect(result.body).toHaveProperty("data");
     });
 
-    it("delete product", async () => {
+    it("delete product (DELETE)", async () => {
       const result = await request
         .delete(`/product/${productData._id}`)
         .set("Authorization", `Bearer ${access_token}`)

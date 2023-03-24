@@ -1,11 +1,11 @@
 export const demoUserBuyer = {
   role: "buyer",
-  username: "gift",
+  username: "tama",
   password: "123456",
 };
 
 export const demoUserSeller = {
   role: "seller",
-  username: "chris06",
+  username: "peter",
   password: "123456",
 };
