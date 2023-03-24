@@ -4,13 +4,10 @@
   "main": "./index.js",
   "private": true,
   "scripts": {
-    "start0": "nodemon --watch ./src/**/*.ts --ignore ./src/**/*.spec.ts --exec babel-node ./src/index.ts",
     "start": "nodemon --watch ./src/**/*.ts --ignore ./src/**/*.spec.ts --exec ts-node ./src/index.ts",
     "start-prod": "node ./index.js",
     "build": "npx rimraf dist && npx tsc -b",
-    "test": "cross-env NODE_ENV=test jest --config ./jest.config.ts --runInBand --detectOpenHandles",
-    "test:all": "cross-env NODE_ENV=test jest --config ./jest.config.ts  --coverage --detectOpenHandles",
-    "test:0": "npx jest --runInBand"
+    "test": "cross-env NODE_ENV=test jest --config ./jest.config.ts --runInBand --detectOpenHandles"
   },
   "author": "Chris",
   "license": "ISC",
