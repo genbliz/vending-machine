@@ -9,7 +9,6 @@ import { UserRolesEnum } from "../user/user.types";
 const routes = Router();
 
 routes.post("/login", [loginUser]);
-//
 routes.post("/buy", [varifyUserHasRole(UserRolesEnum.buyer), buyProduct]);
 routes.post("/deposit", [varifyUserHasRole(UserRolesEnum.buyer), depositCoin]);
 

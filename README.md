@@ -29,8 +29,7 @@ $ npm run start
 $ npm run test
 ```
 
-## Documentation
-Navigate to  ```http://localhost:3000/docs``` on your computer to view the openapi documentation.
+## Postman Url
 
 ## Technology Used
 * **Library**: Express JS
