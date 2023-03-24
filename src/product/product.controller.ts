@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { verifyGetUserSessionData } from "../helpers/auth-session";
+// import { GenericFriendlyError } from "../helpers/error";
 import { responseError, responseSuccess } from "../helpers/response";
 import { StatusCode } from "../helpers/status-codes";
 import { UserRepository } from "../user/user.repository";
@@ -39,10 +40,6 @@ export async function buyProduct(req: Request, res: Response) {
       });
     }
 
-    if (!VALID_DEPOSIT_BUY_COIN_VALUES.includes(amount)) {
-      return responseError({ res, message: `Amount must be one of: [${VALID_DEPOSIT_BUY_COIN_VALUES.join(", ")}]` });
-    }
-
     const user = await UserRepository.getById(sessionUser.userId);
 
     if (!user?._id) {
@@ -55,15 +52,41 @@ export async function buyProduct(req: Request, res: Response) {
       return responseError({ res, message: "Product not found" });
     }
 
-    if (amount > user.deposit) {
-      return responseError({ res, message: `You have no sufficient deposit` });
-    }
-
     if (amount > product.amountAvailable) {
       return responseError({ res, message: `Only ${product.amountAvailable} products, in stock` });
     }
 
-    return responseSuccess({ res, data: product });
+    const newAmountAvailable = product.amountAvailable - amount;
+    const totalSpent = product.cost * amount;
+
+    if (totalSpent > user.deposit) {
+      return responseError({ res, message: `You have no sufficient deposit` });
+    }
+
+    const newDeposit = user.deposit - totalSpent;
+
+    await ProductRepository.patch({
+      dataId: product._id,
+      patialData: { amountAvailable: newAmountAvailable },
+    });
+
+    await UserRepository.patch({
+      dataId: user._id,
+      patialData: { deposit: newDeposit },
+    });
+
+    const resData = {
+      product: {
+        ...product,
+        amountAvailable: newAmountAvailable,
+        createdAt: undefined,
+        updatedAt: undefined,
+      },
+      totalSpent,
+      change: newDeposit,
+    };
+
+    return responseSuccess({ res, data: resData });
   } catch (error) {
     return responseError({ res, error });
   }
@@ -83,6 +106,13 @@ export async function createProduct(req: Request, res: Response) {
   try {
     const sessionUser = await verifyGetUserSessionData(req);
     const { amountAvailable, productName, cost } = req.body as IProduct;
+
+    if (!VALID_DEPOSIT_BUY_COIN_VALUES.includes(cost)) {
+      return responseError({
+        res,
+        message: `cost coin must be one of: [${VALID_DEPOSIT_BUY_COIN_VALUES.join(", ")}]`,
+      });
+    }
 
     const product = await ProductRepository.create({
       cost,

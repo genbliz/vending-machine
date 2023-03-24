@@ -7,8 +7,8 @@ export const productSchema: IBaseSchema<IProduct> = {
   _id: Joi.string().uuid().required(),
   productName: Joi.string().required(),
   //
-  cost: JoiMultipleOf5(),
-  amountAvailable: Joi.number().default(0).min(0),
+  cost: JoiMultipleOf5().required(),
+  amountAvailable: Joi.number().required().default(0).min(0),
   //
   sellerId: Joi.string().uuid().required(),
   createdAt: Joi.string().isoDate(),

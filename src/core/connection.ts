@@ -20,6 +20,6 @@ export function getMongoConnection() {
 }
 
 export function getMongoDbConnection() {
-  const dbname = envConfig.NODE_ENV === "test" ? envConfig.MONGO_DB_TEST_NAME : envConfig.MONGO_DB_URI;
+  const dbname = envConfig.NODE_ENV === "test" ? envConfig.MONGO_DB_TEST_NAME : envConfig.MONGO_DB_NAME;
   return getMongoConnection().db(dbname);
 }

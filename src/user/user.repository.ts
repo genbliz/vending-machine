@@ -7,14 +7,6 @@ class UserRepositoryBase extends BaseRepository<IUser> {
     super({ schema: userSchema, tableName: "users" });
   }
 
-  deposit() {
-    //
-  }
-
-  reset() {
-    //
-  }
-
   getByUserName(username: string) {
     return this.findOne({ username });
   }
